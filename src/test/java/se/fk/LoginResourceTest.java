@@ -18,7 +18,7 @@ public class LoginResourceTest {
                 .when().post("/auth/login")
                 .then()
                 .statusCode(200)
-                .body("message", is("access granted"));
+                .body("message", is("Email sent"));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class LoginResourceTest {
                 .when().post("/auth/login")
                 .then()
                 .statusCode(404)
-                .body("message", is("access denied"));
+                .body("message", is("Email not found"));
     }
 
     @Test

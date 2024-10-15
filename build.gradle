@@ -17,6 +17,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-openapi:3.0.0' // Se till att detta är korrekt
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:2.1.6'
+    implementation 'org.slf4j:slf4j-api:2.0.0' // SLF4J API
+    implementation 'ch.qos.logback:logback-classic:1.2.3'     // Logback (logger-implementation)
 }
 
 group 'se.fk'
