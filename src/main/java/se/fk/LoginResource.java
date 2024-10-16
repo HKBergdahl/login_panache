@@ -21,6 +21,11 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 
 //import jakarta.validation.ConstraintViolationException;
 
@@ -29,6 +34,12 @@ import java.util.List;
 
 @Path("/auth") //CG
 public class LoginResource {
+
+    @Inject
+    RegisteredUsersRepository registeredUsersRepository;
+
+    @Inject
+    LoginAttemptRepository loginAttemptRepository; // Säkerställ att detta finns
 
     // Skapa en logger-instans för att registrera händelser i systemet
     private static final Logger logger = LoggerFactory.getLogger(LoginResource.class);
@@ -39,6 +50,8 @@ public class LoginResource {
     // Lista för att lagra "tillåtna" emailadresser
     private List<String> allowedEmails;
 
+    // Lista för att lagra login-förfrågningar
+    private List<LoginAttempt> loginAttempts = new ArrayList<>();
 
     // Konstruktor för att initialisera listan med email-adresser
     public LoginResource() {
@@ -65,6 +78,12 @@ public class LoginResource {
     public Response login(@Valid LoginRequest request) {
         String email = request.getEmail(); // Hämtar epostadressen från begäran
         logger.info("Attempting login for email: {}", email); // Loggar händelsen
+
+        // Skapa och lagra en ny login-förfrågan
+        LoginAttempt attempt = new LoginAttempt(email);
+        loginAttemptRepository.save(attempt); // Spara i databasen
+
+        loginAttempts.add(attempt);
 
             // Kontroll om epostadressen finns i listan över giltiga adresser
             if (allowedEmails.contains(email.toLowerCase())) { // Adressen är giltig
