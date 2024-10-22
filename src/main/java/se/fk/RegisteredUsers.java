@@ -1,14 +1,13 @@
 package se.fk;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 @Entity
-@Table(name = "registered_users")
-public class RegisteredUsers {
+@Table(name = "registeredusers")
+public class RegisteredUsers extends PanacheEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(unique = true, nullable = false)  // Unik e-post och inte null
     private String email;

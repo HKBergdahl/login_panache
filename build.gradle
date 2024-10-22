@@ -10,16 +10,32 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-resteasy-reactive'
-    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
-    implementation 'io.quarkus:quarkus-hibernate-validator'
-    implementation 'io.quarkus:quarkus-arc'
-    implementation 'io.quarkus:quarkus-smallrye-openapi:3.0.0' // Se till att detta är korrekt
-    testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation 'io.rest-assured:rest-assured'
-    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:2.1.6'
+    implementation 'io.quarkus:quarkus-resteasy-reactive' // Använd Resteasy Reactive
+    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson' // För JSON-hantering med Resteasy Reactive
+    implementation 'io.quarkus:quarkus-hibernate-validator' // Validering
+    implementation 'io.quarkus:quarkus-arc' // CDI (Contexts and Dependency Injection)
+    implementation 'io.quarkus:quarkus-smallrye-openapi:3.0.0' // För OpenAPI-dokumentation
+
+    testImplementation 'io.quarkus:quarkus-junit5' // JUnit5-stöd för tester
+    testImplementation 'io.rest-assured:rest-assured' // För tester av REST-tjänster
+
     implementation 'org.slf4j:slf4j-api:2.0.0' // SLF4J API
-    implementation 'ch.qos.logback:logback-classic:1.2.3'     // Logback (logger-implementation)
+    implementation 'ch.qos.logback:logback-classic:1.2.3' // Logback (logger-implementation)
+
+    // JPA och databas-beroenden
+    implementation 'io.quarkus:quarkus-hibernate-orm-panache' // Panache för enklare ORM
+    implementation 'io.quarkus:quarkus-jdbc-postgresql' // PostgreSQL JDBC-driver
+
+    // för Mockito
+    testImplementation 'org.mockito:mockito-core:5.4.0' // Använd den senaste stabila versionen
+
+    // junit
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1' // Om du använder JUnit 5
+
+
+
 }
 
 group 'se.fk'
