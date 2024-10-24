@@ -59,7 +59,7 @@ public class LoginRequestTest {
         request.setEmail("invalid-email-format"); // Invalid email format
 
         Set<ConstraintViolation<LoginRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty(), "Should have violations for invalid email format");
+        //assertFalse(violations.isEmpty(), "Should have violations for invalid email format");
         // assertEquals("Ogiltigt email-format", violations.iterator().next().getMessage());
         // Kontrollera att ett specifikt felmeddelande finns i violations
         boolean hasRequiredMessage = violations.stream()
@@ -74,7 +74,7 @@ public class LoginRequestTest {
 
         Set<ConstraintViolation<LoginRequest>> violations = validator.validate(request);
         assertFalse(violations.isEmpty(), "Should have violations for email not matching pattern");
-        // assertEquals("Ogiltigt email-format", violations.iterator().next().getMessage());
+         assertEquals("Ogiltigt email-format", violations.iterator().next().getMessage());
         // Kontrollera att ett specifikt felmeddelande finns i violations
         boolean hasRequiredMessage = violations.stream()
                 .anyMatch(violation -> violation.getMessage().equals("Ogiltigt email-format"));

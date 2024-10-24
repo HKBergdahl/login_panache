@@ -93,26 +93,7 @@ public class LoginResourceTest {
     }
 
 
-    @Test
-    void testRegisterUser_invalidEmailFormat_returnBadRequest() {
-        // Skapa en giltig LoginRequest
-        LoginRequest request = new LoginRequest();
-        request.setEmail("test@1");
-        System.out.println("Testing registration with email: " + request.getEmail()); // Logga vad som testas
 
-        // Försök att registrera användaren och kontrollera att svaret är BAD REQUEST
-        Response response = loginResource.registerUser(request);
-        // Logga svaret för att hjälpa felsöka
-        System.out.println("Response status: " + response.getStatus());
-        System.out.println("Response entity: " + response.getEntity());
-
-        //assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-     //   assertEquals("Ogiltigt email-format", response.getEntity());
-
-        // Validera LoginRequest manuellt
-      //  Set<ConstraintViolation<LoginRequest>> violations = validator.validate(request);
-       // assertFalse(violations.isEmpty()); // Kontrollera att det finns valideringsfel
-    }
 
     @Test
     void testInvalidEmailShouldThrowConstraintViolation() {
@@ -124,4 +105,20 @@ public class LoginResourceTest {
         assertFalse(violations.isEmpty()); // Kontrollera att det finns valideringsfel
     }
 
+
+    @Test
+    void testRegisterUser_invalidEmail_returnBadRequest_alt2() {
+        // Skapa en LoginRequest med en ogiltig e-postadress
+        LoginRequest request = new LoginRequest();
+        request.setEmail("ogiltig-email"); // Använd en ogiltig e-postadress
+
+        // Simulera en POST-begäran till register-anropet
+        given()
+                .contentType("application/json")
+                .body(request) // Konvertera objektet till JSON
+                .when()
+                .post("/auth/register") // Kontrollera att sökvägen stämmer överens med din registerUser-metod
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode()); // Kontrollera att svaret är 400 Bad Request
+    }
 }

@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Pattern;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import jakarta.validation.ConstraintViolationException;
+
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +40,7 @@ public class LoginResource {
 
     // Dependencyinjections för
     @Inject // registrerade användare
-            RegisteredUsersRepository registeredUsersRepository;
+    RegisteredUsersRepository registeredUsersRepository;
 
     @Inject // inloggningsförsök
     LoginAttemptRepository loginAttemptRepository; // Säkerställ att detta finns
@@ -117,28 +119,26 @@ public class LoginResource {
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerUser(@Valid LoginRequest request) {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             // Hämtar epostadressen från registreringsbegäran
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
             String email = request.getEmail();
             logger.info("Registering email: {}", email); // Loggar registreringsförsöket
             System.out.println("Received email: " + email);  // Utskrift för att se vilken e-post som skickades in
-
-
 
             // Kontrollera om e-posten redan är registrerad
             if (registeredUsersRepository.findByEmail(email).isPresent()) {
                 // Om epostadressen redan är registreras returneras en konflikt (409)
                 return buildJsonResponse(Response.Status.CONFLICT, "Email already registered");
             }
-
             // Registrera användaren
             RegisteredUsers newUser = new RegisteredUsers(email);
             registeredUsersRepository.registerUser(newUser); // Lägg till användaren i databasen
-
             // Returnera en skapad respons (201) med meddelande om att registeringen lyckats
             return buildJsonResponse(Response.Status.CREATED, "User registered");
-
     }
+
+
+
 
 }
 

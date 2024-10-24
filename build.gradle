@@ -4,8 +4,10 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
+    gradlePluginPortal() // Behövs för att hämta plugins
+    maven { url "https://repository.jboss.org/nexus/content/groups/public/" } // **Lägg till denna rad**
 }
 
 dependencies {
@@ -13,6 +15,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive' // Använd Resteasy Reactive
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson' // För JSON-hantering med Resteasy Reactive
     implementation 'io.quarkus:quarkus-hibernate-validator' // Validering
+
     implementation 'io.quarkus:quarkus-arc' // CDI (Contexts and Dependency Injection)
     implementation 'io.quarkus:quarkus-smallrye-openapi:3.0.0' // För OpenAPI-dokumentation
 
@@ -21,6 +24,9 @@ dependencies {
 
     implementation 'org.slf4j:slf4j-api:2.0.0' // SLF4J API
     implementation 'ch.qos.logback:logback-classic:1.2.3' // Logback (logger-implementation)
+
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.0' // Kontrollera senaste version
+    implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final' // Kontrollera senaste version
 
     // JPA och databas-beroenden
     implementation 'io.quarkus:quarkus-hibernate-orm-panache' // Panache för enklare ORM
@@ -34,7 +40,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1' // Om du använder JUnit 5
 
-
+    // Cucumber dependencies
+    testImplementation 'io.cucumber:cucumber-java:7.20.1'
+    testImplementation 'io.cucumber:cucumber-junit:7.20.1'
+    testImplementation 'io.quarkiverse.cucumber:quarkus-cucumber:1.1.0'
 
 }
 
@@ -48,6 +57,17 @@ java {
 
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+
+    // Använd JUnit 5 som testplattform
+    useJUnitPlatform() // Se till att JUnit 5 används
+
+    // Konfigurera Cucumber rapportering
+    systemProperty 'cucumber.plugin', 'json:build/reports/cucumber.json,html:build/reports/cucumber.html'
+
+    // Logga testresultat
+    testLogging {
+        events "passed", "skipped", "failed" // Visa resultat för passerade, missade och misslyckade tester
+    }
 }
 
 compileJava {
@@ -58,3 +78,16 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
 }
+
+//cucumber {
+//    reports {
+//        json {
+  //          enabled = true
+  //          output = file("$buildDir/reports/cucumber.json")
+  //      }
+  //      html {
+  //          enabled = true
+   //         output = file("$buildDir/reports/cucumber.html")
+   //     }
+   // }
+//}
