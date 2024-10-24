@@ -1,16 +1,20 @@
 name: Java CI
 
+# Definierar när workflow ska köras
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" ] # Workflow triggas vid push på master
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master" ] # Workflow triggas vis pull_request på master
 
+# Definierar jobben som ska köras
 jobs:
   build:
 
+    # Specificerar vilken typ av operativsystem som ska användas
     runs-on: ubuntu-latest
 
+    # Definierar tjänster som behövs för jobbet
     services:
       postgres:
         image: postgres:latest
@@ -26,15 +30,14 @@ jobs:
           --health-timeout 5s 
           --health-retries 5
 
+    # Stegen som kommer att köras i jobbet
     steps:
-
-            
 
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Set executable permissions
-        run: chmod +x ./gradlew  # Steg för att sätta körbarhetsrättigheter
+        run: chmod +x ./gradlew  # gör gradlew körbar
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
