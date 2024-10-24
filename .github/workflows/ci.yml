@@ -15,6 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set executable permissions
+        run: chmod +x ./gradlew  # Steg för att sätta körbarhetsrättigheter
+
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
