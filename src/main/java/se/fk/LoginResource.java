@@ -75,7 +75,10 @@ public class LoginResource {
         }
 
         // Skapa och lagra en ny login-förfrågan
-        LoginAttempt attempt = new LoginAttempt(email);
+        RegisteredUsers registeredUser = registeredUsersRepository.findByEmail(email).get(); // Hämtar den registrerade användaren
+        LoginAttempt attempt = new LoginAttempt(registeredUser); // Skapar loginattempt
+
+       // LoginAttempt attempt = new LoginAttempt(email);
         loginAttemptRepository.save(attempt); // Sparar inloggningsförsöket i databasen
 
         // Generera token och koppla till användaren
