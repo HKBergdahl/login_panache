@@ -35,6 +35,10 @@ public class RegisteredUsers extends PanacheEntity {
         this.email = email;
     }
 
+    public Long getId() {
+        return id; // Lägg till denna metod
+    }
+
     public List<LoginAttempt> getLoginAttempts() {
         return loginAttempts;
     }

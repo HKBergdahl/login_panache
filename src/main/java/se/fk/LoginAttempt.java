@@ -20,10 +20,20 @@ public class LoginAttempt {
     @Column(nullable = true)
     private String email;
 
+    @Column(nullable = false, unique = true) // Token ska vara unikt
+    private String token; // Nytt fält för att lagra token
+
     private LocalDateTime timestamp;
 
     // Defaultkonstruktor (behövs av Hibernate)
     public LoginAttempt() {
+    }
+
+    public LoginAttempt(RegisteredUsers registeredUser, String token) {
+        this.email = registeredUser.getEmail();
+        this.registeredUser = registeredUser; // Set the registered user
+        this.token = token;
+        this.timestamp = LocalDateTime.now(); // Set the timestamp when created
     }
 
     public LoginAttempt(RegisteredUsers registeredUser) {
@@ -42,5 +52,9 @@ public RegisteredUsers getRegisteredUser() {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public String getToken() {
+        return token; // Getter för token
     }
 }

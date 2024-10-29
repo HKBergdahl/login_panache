@@ -24,17 +24,27 @@ public class LoginResourceSteps {
     @Inject
     LoginResource loginResource;
 
+//    @Given("The user with email {string} does not exist")
+//    public void the_user_with_email_does_not_exist(String email) {
+//        // Kontrollera att användaren inte redan finns via ett GET-anrop
+//        response = given()
+//                .when()
+//                .get("/auth/requestaccess?email=" + email) // Antag att du har en metod för att kolla existens
+//                .then()
+//                .extract().response();
+//
+//        assertEquals(404, response.getStatusCode(), "User should not exist before registration"); // 404 betyder att användaren inte finns
+//    }
+
     @Given("The user with email {string} does not exist")
     public void the_user_with_email_does_not_exist(String email) {
-        // Kontrollera att användaren inte redan finns via ett GET-anrop
-        response = given()
-                .when()
-                .get("/auth/requestaccess?email=" + email) // Antag att du har en metod för att kolla existens
-                .then()
-                .extract().response();
+        // Hämta userId från e-postadressen
+        Optional<RegisteredUsers> userOptional = registeredUsersRepository.findByEmail(email);
 
-        assertEquals(404, response.getStatusCode(), "User should not exist before registration"); // 404 betyder att användaren inte finns
+        // Om användaren inte finns, förväntar vi oss en 404-statuskod
+        assertFalse(userOptional.isPresent(), "User should not exist before registration"); // Kontrollera att användaren inte finns
     }
+
 
     @When("I try to register a new user with name {string} and email {string}")
     public void i_try_to_register_a_new_user_with_name_and_email(String name, String email) {

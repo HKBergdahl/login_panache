@@ -50,6 +50,7 @@ public class LoginResource {
 
     // Datastruktur för att lagra login-förfrågningar temporärt
     private Map<String, String> tokens = new ConcurrentHashMap<>();
+    //private Map<String, RegisteredUsers> tokens = new ConcurrentHashMap<>();
 
     // POST-bgäran för inloggningar
     @POST
@@ -76,15 +77,25 @@ public class LoginResource {
 
         // Skapa och lagra en ny login-förfrågan
         RegisteredUsers registeredUser = registeredUsersRepository.findByEmail(email).get(); // Hämtar den registrerade användaren
-        LoginAttempt attempt = new LoginAttempt(registeredUser); // Skapar loginattempt
+
+        //Generera token
+        String token = generateToken();
+
+
+        LoginAttempt attempt = new LoginAttempt(registeredUser, token); // Skapar loginattempt
 
        // LoginAttempt attempt = new LoginAttempt(email);
         loginAttemptRepository.save(attempt); // Sparar inloggningsförsöket i databasen
 
-        // Generera token och koppla till användaren
-        String token = generateToken();
-        tokens.put(email, token); // Koppla token till användarens epost
+        //  koppla token till användare
+       // tokens.put(email, token); // Koppla token till användarens epost
+        //tokens.put(token, registeredUser); // Koppla token till den registrerade användaren
+        tokens.put(registeredUser.getId().toString(), token); // Koppla token till användarens ID
+
         logger.info("Generated login link: /auth/requestaccess?token={}", token);
+
+        // Skicka mejl med login-länken (implementera emailService)
+        //emailService.sendLoginLink(email, token); // **Ny rad för att skicka mejl**
 
         return buildJsonResponse(Response.Status.OK, "Email sent"); // Returnerar lyckad inloggning
     }
@@ -92,17 +103,45 @@ public class LoginResource {
 
     // GET-begäran för att verifiera token
     @GET
-    @Path("/requestaccess")
-    public Response requestAccess(@QueryParam("token") String token) {
-        // Validera om tokenen finns i tokens-map:en
-        if (tokens.containsValue(token)) {
-            logger.info("Access granted for token: {}", token); // Logga access granted
-            return Response.ok().entity("{\"message\": \"Access granted\"}").build(); // Returnera access granted
-        } else {
-            logger.warn("Access denied for token: {}", token); // Logga access denied
-            return buildJsonResponse(Response.Status.FORBIDDEN, "Access denied"); // Returnera access denied
+    @Path("/profile/{userId}")
+    public Response getProfile(@PathParam("userId") String userId, @HeaderParam("Authorization") String token) {
+        // 1. Kontrollera om token är null eller inte finns i tokens-map:en
+        // Kontrollera om token är null eller inte finns i tokens-map:en
+        logger.info("Received userId: {}, token: {}", userId, token);
+        logger.info("Current tokens: {}", tokens);
+        if (token == null || !tokens.containsValue(token)) {
+            System.out.println("*************************");
+            return buildJsonResponse(Response.Status.FORBIDDEN, "Access denied");
         }
+
+        // 2. Hämta användaren kopplad till token
+        RegisteredUsers registeredUser = getRegisteredUserFromToken(token);
+        if (registeredUser == null) {
+            return buildJsonResponse(Response.Status.FORBIDDEN, "Access denied: Invalid token");
+        }
+        logger.info("Comparing userId: {} with registeredUser ID: {}", userId, registeredUser.getId());
+
+        // 3. Jämför userId med den registrerade användarens ID
+        if (!registeredUser.getId().toString().equals(userId)) {
+            return buildJsonResponse(Response.Status.FORBIDDEN, "Access denied: User ID does not match");
+        }
+
+        // 4. Om allt är okej, returnera access granted för användarens profil
+        // Om token är giltigt, returnera access granted för användarens profil
+        return Response.ok().entity("{\"message\": \"Access granted for user " + userId + "\"}").build();
     }
+    
+//    @Path("/requestaccess") // Innan vecka 5
+//    public Response requestAccess(@QueryParam("token") String token) {
+//        // Validera om tokenen finns i tokens-map:en
+//        if (tokens.containsValue(token)) {
+//            logger.info("Access granted for token: {}", token); // Logga access granted
+//            return Response.ok().entity("{\"message\": \"Access granted\"}").build(); // Returnera access granted
+//        } else {
+//            logger.warn("Access denied for token: {}", token); // Logga access denied
+//            return buildJsonResponse(Response.Status.FORBIDDEN, "Access denied"); // Returnera access denied
+//        }
+//    }
 
     // Hjälpmetod för att bygga JSON-svar
     private Response buildJsonResponse(Response.Status status, String message) {
@@ -138,6 +177,16 @@ public class LoginResource {
             registeredUsersRepository.registerUser(newUser); // Lägg till användaren i databasen
             // Returnera en skapad respons (201) med meddelande om att registeringen lyckats
             return buildJsonResponse(Response.Status.CREATED, "User registered");
+    }
+
+    // Metod för att hämta användaren kopplad till token
+    private RegisteredUsers getRegisteredUserFromToken(String token) {
+        return tokens.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().equals(token)) // Jämför token
+                .map(entry -> registeredUsersRepository.findById(Long.parseLong(entry.getKey()))) // Hämta användare baserat på ID
+                .findFirst()
+                .orElse(null); // Returnera null om ingen användare hittas
     }
 
 

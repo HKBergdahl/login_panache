@@ -1,7 +1,7 @@
 Feature: LoginResource
 
   Scenario: Registrera en ny kund
-    When I try to register a new user with name "Karin" and email "karin@karin.com"
+    When I try to register a new user with name "a" and email "a@karin.com"
     Then The user is created
 
 
