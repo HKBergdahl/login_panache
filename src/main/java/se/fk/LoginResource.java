@@ -184,7 +184,8 @@ public class LoginResource {
         return tokens.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().equals(token)) // Jämför token
-                .map(entry -> registeredUsersRepository.findById(Long.parseLong(entry.getKey()))) // Hämta användare baserat på ID
+//                .map(entry -> registeredUsersRepository.findById(Long.parseLong(entry.getKey()))) // Hämta användare baserat på ID
+                .map(entry -> registeredUsersRepository.findById(Long.parseLong(entry.getKey())).orElse(null)) // Hämta användare baserat på ID
                 .findFirst()
                 .orElse(null); // Returnera null om ingen användare hittas
     }

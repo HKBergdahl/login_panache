@@ -70,6 +70,8 @@ test {
     }
 }
 
+
+
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters'
@@ -77,6 +79,10 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test) {
+    systemProperty 'quarkus.profile', 'test'
 }
 
 //cucumber {

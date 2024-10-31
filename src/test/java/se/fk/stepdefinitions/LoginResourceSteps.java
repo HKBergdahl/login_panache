@@ -51,6 +51,8 @@ public class LoginResourceSteps {
         // Skapa en JSON-kropp för POST-anropet
         String userJson = "{ \"email\": \"" + email + "\" }"; // Använd endast e-post i registreringen
 
+        System.out.println("Profil: " + System.getProperty("quarkus.profile"));
+
         // Skicka POST-anrop till /register
         response = given()
                 .header("Content-Type", "application/json")
